@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Scrapbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2D5A3D;
+      --secondary: #A3B18A;
+      --accent: #588157;
+      --background: #DAD7CD;
+      --text-primary: #2D5A3D;
+      --text-secondary: #588157;
+      --shadow: rgba(45, 90, 61, 0.15);
+      --overlay-bg: rgba(218, 215, 205, 0.95);
+      --transition-speed: 0.4s;
+    }
+
+    [data-theme="dark"] {
+      --primary: #C4D4B6;
+      --secondary: #8BA888;
+      --accent: #A3B18A;
+      --background: #1A2E1A;
+      --text-primary: #C4D4B6;
+      --text-secondary: #A3B18A;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --overlay-bg: rgba(26, 46, 26, 0.97);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
+      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    body.locked {
+      overflow: hidden;
+    }
+
+    /* ============ NAVIGATION ============ */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .site-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-primary);
+      text-decoration: none;
+      position: relative;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .theme-toggle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--text-primary);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-speed) ease;
+      position: relative;
+    }
+
+    .theme-toggle:hover {
+      background: var(--text-primary);
+    }
+
+    .theme-toggle:hover svg {
+      fill: var(--background);
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-primary);
+      transition: fill var(--transition-speed) ease;
+    }
+
+    .sun-icon, .moon-icon {
+      position: absolute;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    [data-theme="light"] .sun-icon {
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+
+    [data-theme="light"] .moon-icon {
+      opacity: 0;
+      transform: rotate(-90deg);
+    }
+
+    [data-theme="dark"] .sun-icon {
+      opacity: 0;
+      transform: rotate(90deg);
+    }
+
+    [data-theme="dark"] .moon-icon {
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+
+    /* ============ HERO SECTION ============ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5vw;
+      position: relative;
+    }
+
+    .hero-text {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      line-height: 0.85;
+    }
+
+    .hero-text span {
+      font-family: 'Playfair Display', serif;
+      font-size: 12vw;
+      font-weight: 900;
+      color: var(--text-primary);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .hero-text span.outlined {
+      -webkit-text-stroke: 3px var(--text-primary);
+      color: transparent;
+      transition: -webkit-text-stroke-color var(--transition-speed) ease;
+    }
+
+    .hero-text span:nth-child(1) {
+      opacity: 0;
+      animation: fadeSlideDown 0.8s ease forwards;
+    }
+
+    .hero-text span:nth-child(2) {
+      opacity: 0;
+      animation: fadeSlideDown 0.8s ease 0.15s forwards;
+    }
+
+    .hero-text span:nth-child(3) {
+      opacity: 0;
+      animation: fadeSlideDown 0.8s ease 0.3s forwards;
+    }
+
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .scroll-indicator span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-secondary);
+    }
+
+    .scroll-indicator .arrow {
+      width: 24px;
+      height: 24px;
+      border-right: 2px solid var(--text-secondary);
+      border-bottom: 2px solid var(--text-secondary);
+      transform: rotate(45deg);
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(8px); }
+    }
+
+    /* ============ GALLERY SECTION ============ */
+    .gallery-section {
+      padding: 6rem 2rem 8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .gallery-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin-bottom: 3rem;
+      color: var(--text-primary);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .gallery-title.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .gallery-arc {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 1400px;
+      height: 500px;
+      position: relative;
+    }
+
+    .gallery-item {
+      position: absolute;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 10px 30px var(--shadow);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .gallery-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-20px) scale(1.08);
+      box-shadow: 0 25px 50px var(--shadow);
+      z-index: 10;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .gallery-item::after {
+      content: attr(data-location);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.6));
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .gallery-item:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============ EXPANDED VIEW ============ */
+    .expanded-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .expanded-view.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .expanded-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(3px) brightness(0.7);
+      transform: scale(1.1);
+      transition: transform 0.6s ease;
+    }
+
+    .expanded-view.active .expanded-bg {
+      transform: scale(1);
+    }
+
+    .expanded-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      gap: 4rem;
+      max-width: 1200px;
+      padding: 3rem;
+      align-items: flex-start;
+      transform: translateY(30px);
+      opacity: 0;
+      transition: all 0.5s ease 0.2s;
+    }
+
+    .expanded-view.active .expanded-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .story-section {
+      flex: 1;
+      max-width: 450px;
+    }
+
+    .story-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      color: white;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+
+    .story-section .date {
+      font-size: 0.9rem;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 2rem;
+      text-shadow: 0 1px 10px rgba(0,0,0,0.5);
+    }
+
+    .story-section p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 1px 10px rgba(0,0,0,0.5);
+    }
+
+    .secondary-images {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .secondary-images img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease;
+    }
+
+    .secondary-images img:hover {
+      transform: scale(1.05);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid white;
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .close-btn:hover {
+      background: white;
+    }
+
+    .close-btn:hover svg {
+      stroke: var(--primary);
+    }
+
+    .close-btn svg {
+      width: 24px;
+      height: 24px;
+      stroke: white;
+      stroke-width: 2;
+      transition: stroke 0.3s ease;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1024px) {
+      .hero-text span {
+        font-size: 10vw;
+      }
+
+      .gallery-arc {
+        height: 500px;
+      }
+
+      .expanded-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+      }
+
+      .secondary-images {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        padding: 1.5rem 1.5rem;
+        gap: 1.5rem;
+      }
+
+      .nav-links {
+        gap: 1.5rem;
+      }
+
+      .nav-links a {
+        font-size: 0.75rem;
+      }
+
+      .hero-text span {
+        font-size: 8vw;
+      }
+
+      .gallery-arc {
+        height: 400px;
+      }
+
+      .story-section h2 {
+        font-size: 2rem;
+      }
+
+      .secondary-images img {
+        width: 120px;
+        height: 120px;
+      }
+    }
+
+    .diary-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      background: var(--background);
+    }
+
+    .diary-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sparkle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .diary-content {
+      position: relative;
+      z-index: 10;
+      max-width: 700px;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .diary-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--text-primary);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .diary-close:hover {
+      background: var(--text-primary);
+    }
+
+    .diary-close:hover svg {
+      stroke: var(--background);
+    }
+
+    .diary-close svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-primary);
+      transition: stroke 0.3s ease;
+    }
+
+    .diary-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .diary-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.05em;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .diary-text {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 2;
+      color: var(--text-secondary);
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 768px) {
+      .diary-heading {
+        font-size: 1.6rem;
+      }
+      .diary-text {
+        font-size: 1rem;
+      }
+      .diary-content {
+        padding: 2rem 1.5rem;
+      }
+    }
+
+    .social-footer {
+      padding: 3rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      color: var(--text-primary);
+      transform: translateY(-3px);
+    }
+
+    .social-link svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .submit-section {
+      padding: 4rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .submit-inner {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .submit-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .submit-text {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .submit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      text-align: left;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group.full-width {
+      width: 100%;
+    }
+
+    .form-group label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      background: var(--background);
+      border: 1.5px solid var(--text-secondary);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      resize: vertical;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .submit-btn {
+      margin-top: 0.5rem;
+      padding: 1rem 2rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--background);
+      background: var(--text-primary);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .submit-note {
+      margin-top: 1.5rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .submit-note a {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <a href="#" class="site-logo">HY</a>
+    <ul class="nav-links">
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#" id="diaryLink">Diary</a></li>
+      <li><a href="#submit">Tell me</a></li>
+    </ul>
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <svg class="sun-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"/>
+        <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>
+      <svg class="moon-icon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <span>SCRAPBOOK</span>
+      <span class="outlined">SCRAPBOOK</span>
+      <span>SCRAPBOOK</span>
+    </div>
+    <div class="scroll-indicator">
+      <span>Explore the journey</span>
+      <div class="arrow"></div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="gallery-section" id="gallery">
+    <h2 class="gallery-title">The Journey So Far</h2>
+    <div class="gallery-arc" id="galleryArc"></div>
+  </section>
+
+  <!-- Submit Section -->
+  <!-- Submit Section -->
+  <section class="submit-section" id="submit">
+    <div class="submit-inner">
+      <h2 class="submit-heading">Share Your Story</h2>
+      <p class="submit-text">Been somewhere that stayed with you? Send me your photo and story — I'd love to hear it.</p>
+      <form class="submit-form" id="submitForm">
+        <div class="form-group">
+          <label for="submitName">Your Name</label>
+          <input type="text" id="submitName" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="submitImage">Photo URL</label>
+          <input type="url" id="submitImage" name="image" placeholder="https://...">
+        </div>
+        <div class="form-group full-width">
+          <label for="submitStory">Your Story</label>
+          <textarea id="submitStory" name="story" placeholder="Tell me about the trip..." rows="4" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send It</button>
+      </form>
+      <p class="submit-note">Or reach me directly at <a href="https://instagram.com/hiharshh" target="_blank">@hiharshh</a></p>
+    </div>
+  </section>
+
+  <!-- Expanded View -->
+  <div class="expanded-view" id="expandedView">
+    <div class="expanded-bg" id="expandedBg"></div>
+    <button class="close-btn" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    <div class="expanded-content">
+      <div class="story-section">
+        <h2 id="storyTitle"></h2>
+        <div class="date" id="storyDate"></div>
+        <p id="storyText"></p>
+      </div>
+      <div class="secondary-images" id="secondaryImages"></div>
+    </div>
+  </div>
+
+  <!-- Social Footer -->
+  <footer class="social-footer">
+    <div class="social-links">
+      <a href="https://instagram.com/hiharshh" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+        </svg>
+      </a>
+      <a href="https://medium.com/@itsharshyd" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Medium">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.5 6.42-3.98 6.42-2.47 0-3.98-2.88-3.98-6.42 0-3.54 1.5-6.42 3.98-6.42 2.47 0 3.98 2.88 3.98 6.42M24 12c0 3.17-.53 5.47-1.6 5.47-.52 0-1.02-.37-1.44-.64V12c0-3.37-.55-5.82-1.49-5.82-.48 0-1.05.35-1.46.69V.08C17.56.08 18.5 0 19.4 0c1.06 0 1.78.86 1.78 2.05v8.44c0 .4.13.66.38.66.19 0 .4-.12.65-.36l.15-.15.4-.03c.47 0 .67.28.67.65v4.83c0 .78-.08 1.38.44 1.73.17.12.42.19.7.19.49 0 .78-.25.78-.78V12z"/>
+        </svg>
+      </a>
+      <a href="https://x.com/ohhyhi" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="X">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    // ============ THEME TOGGLE ============
+    const themeToggle = document.querySelector('.theme-toggle');
+    const html = document.documentElement;
+
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // ============ TRAVEL DATA ============
+    // Order (left to right): Goa, Spain, London, Paris, France, Uttarakhand, Switzerland, Udaipur
+    const travelData = [
+      {
+        id: 2,
+        location: 'Goa',
+        image: 'https://i.pinimg.com/736x/69/73/6f/69736f26639000fef17b7a4a392b837c.jpg',
+        story: `Our Goa trip was something we had been planning throughout college from first year to second but it finally happened in our third year. It was right before finals, a stressful time, but we knew we had to go because deep down we all felt this might be our last trip together before life pulled us in different directions. So the moment we got the chance to opt out, we took it booked our first flight and headed straight to one of the most peaceful places in India. Staying at Taj Cidade de Goa made it even more special beautiful views, a private beach, and just pure calm. It was my first time being away from home like that, just with friends, and it felt unreal. Funny enough, I don't remember every little detail, even though it hasn't been that long, but I do remember how it felt and that feeling will stay with me forever.`,
+        secondary: [
+          'https://i.pinimg.com/736x/b6/42/a5/b642a50294ceed5ed8834be1c0701f02.jpg',
+          'https://i.pinimg.com/736x/3f/18/9a/3f189a661425bd74c419b920c6c08d95.jpg',
+          'https://i.pinimg.com/736x/14/41/98/1441987233096f693776bfde195f496d.jpg'
+        ]
+      },
+      {
+        id: 1,
+        location: 'Spain',
+        image: 'https://i.pinimg.com/736x/a4/d5/7f/a4d57fa8460f638b801ed0d398a32c6d.jpg',
+        story: `Spain holds a rare, untouchable space in my memory. It was our first real international adventure two of the best weeks of my life, perfectly timed right after college. Traveling with my childhood friends, completely free of parents for the first time, felt like stepping into a totally new world. Every single second was exhilarating, even the parts that weren't perfect (like trying the local food, which, if I'm being honest, I wasn't the biggest fan of!). But the backdrop of Spain was stunning, and every frame of that trip is burned into my mind. More than just a vacation, it was a deeply personal milestone: it was the very beginning chapter with the love of my life. It shaped who I am, and I will carry those days with me forever.`,
+        secondary: [
+          'https://i.pinimg.com/736x/c9/38/b7/c938b7268f3dbee724b936772cc9b111.jpg',
+          'https://i.pinimg.com/736x/e7/0c/d7/e70cd78e1af170b1ebb4617f53d6a1e5.jpg',
+          'https://i.pinimg.com/736x/32/c6/49/32c649ba51e1e59f25608688a0b8831b.jpg'
+        ]
+      },
+      {
+        id: 5,
+        location: 'London',
+        image: 'https://i.pinimg.com/736x/89/7b/89/897b8910a73ba5c6a2f8ed2c0977c923.jpg',
+        story: `My London trip was a completely different kind of experience it was a two-week college project seminar, but it turned into so much more. Being there felt surreal; the city was beautiful in its own calm yet lively way. I met new people, made some great friends, and for the first time, I really felt that "young, free" energy late nights, clubs, drinks, and just living in the moment. At the same time, the college experience there was amazing learning, exploring, and growing in a place so different from home. It felt like a perfect balance of work and life, where I wasn't just attending a seminar, but actually discovering a new version of myself. London gave me memories that feel both exciting and meaningful, like a small chapter of independence I didn't know I needed.`,
+        secondary: [
+          'https://i.pinimg.com/736x/d5/3e/30/d53e306f705c563f292bb5f1cb4e444f.jpg',
+          'https://i.pinimg.com/474x/d2/39/29/d2392996c85a73a35ec34ed6d5fbafe9.jpg',
+          'https://i.pinimg.com/736x/51/11/70/511170a7b6bdaf0b4cb04bf7f30832f3.jpg'
+        ]
+      },
+      {
+        id: 6,
+        location: 'Paris',
+        image: 'https://i.pinimg.com/736x/cf/71/38/cf7138f559a367b7b84763c2fe4dd3d3.jpg',
+        story: `Paris was a spontaneous little escape with my London friends shoutout to Jake, Sophia, Caleb, and Lami. We took a train there, and honestly, the journey itself was such a vibe long, but full of laughs and random moments I won't forget. Paris at night felt different in the best way; we wandered through streets, tried new cafés and restaurants, and just soaked in the city's charm. Our stay was simple, a small shared room, but that somehow made it even more fun and real. It was a short trip just three days before heading off again but we made every moment count. Going to Disneyland was the highlight; for a while, I genuinely felt like a kid again, carefree and excited about the smallest things. It wasn't just about seeing Paris, it was about who I was with and how alive everything felt in those few days.`,
+        secondary: [
+          'https://i.pinimg.com/736x/d2/39/29/d2392996c85a73a35ec34ed6d5fbafe9.jpg',
+          'https://i.pinimg.com/736x/7c/ad/80/7cad802cbabaceb6ca76c7bb1216ce30.jpg',
+          'https://i.pinimg.com/736x/07/79/bf/0779bf2468bbf1ec8954fbce488d3fe0.jpg'
+        ]
+      },
+      {
+        id: 7,
+        location: 'France',
+        image: 'https://i.pinimg.com/736x/73/3f/8e/733f8e057d5b129e097cb52b98922d37.jpg',
+        story: `After Paris, we headed further into France, and somehow the energy of the trip just kept getting better. Another long train ride, but by then it had become part of the fun music, conversations, and that constant feeling of being on the move with the right people. The highlight was definitely the beach rave party just the sound of waves, music in the air, and everyone completely lost in the moment… it's hard to even describe that feeling, it was pure freedom. We also ended up going to a strip club for the first time, and I won't lie I was lowkey scared at first, not knowing what to expect but it turned into one of those "I can't believe I did that" moments we laughed about later. The whole trip felt a little wild, a little unexpected, but that's what made it so real. It was less about the place and more about the experiences the kind that push you out of your comfort zone and stay with you long after.`,
+        secondary: [
+          'https://i.pinimg.com/736x/c6/4c/42/c64c429d5e067aa0cd6ca0089043d85d.jpg',
+          'https://i.pinimg.com/736x/3a/c8/42/3ac8423bdee7d645ac03c9571a482406.jpg',
+          'https://i.pinimg.com/736x/d6/e0/81/d6e08125f4ac99587f4d11867d9b02ba.jpg'
+        ]
+      },
+      {
+        id: 4,
+        location: 'Uttarakhand',
+        image: 'https://i.pinimg.com/736x/bd/a0/c2/bda0c2e0958aff4de040abe026d09637.jpg',
+        story: `Our Uttarakhand trip was honestly one of the funniest to plan because everyone kept telling me, "It's not your kind of place it's too religious, too trek-heavy." I'm not particularly religious, but I respect it, and I remember thinking, you clearly don't know me. So I went anyway, partly to prove them wrong. It was a mix of family and friends, and yes my parents, especially my mom, made sure we did temple visits for the first couple of days. But what came after was the real magic. We stayed in a cozy Airbnb deep in the mountains, run by the sweetest old lady I think I miss her the most from that trip. She had horses we could ride near the house, and we were surrounded by lakes, breathtaking views, and complete silence. There was no network at all, but strangely, you don't even think about your phone. We spent our time hiking, playing board games, and just being present. It's the kind of peaceful life I wish I could relive again I could honestly talk about it all day.`,
+        secondary: [
+          'https://i.pinimg.com/736x/e5/d2/36/e5d23653d8990328cb5dc2196dd56cd5.jpg',
+          'https://i.pinimg.com/736x/bd/a0/c2/bda0c2e0958aff4de040abe026d09637.jpg',
+          'https://i.pinimg.com/736x/ef/fc/73/effc734c862dc28da4136c3a98560e0a.jpg'
+        ]
+      },
+      {
+        id: 8,
+        location: 'Switzerland',
+        image: 'https://i.pinimg.com/736x/0c/c4/c0/0cc4c096b6da6eec6746214c71de52c8.jpg',
+        story: `My Switzerland trip was one of the most personal and meaningful experiences I've had. It was a family trip, and I met my sisters and my dad directly at the airport after almost a year it didn't even feel real at first. The journey there was a bit stressful because my mom is a panic traveler (love her, but wow), so I didn't really have time to process anything. But the moment we landed and saw the people we love the most, everything just felt right. That week turned out to be one of the best of my life quiet, wholesome, and full of moments that actually mattered. It was also our last trip together before everyone got busy and I started working, stepping into a life that didn't quite feel like mine yet. Still, it gave me something I'll always hold onto the feeling of being with the right people at the right time. The rest of it… I'll save for my diary.`,
+        secondary: [
+          'https://i.pinimg.com/736x/00/62/12/0062120110021d2834416f9c539c395e.jpg',
+          'https://i.pinimg.com/736x/0a/28/c9/0a28c9f45d512ddbe963d91d7cf79e05.jpg',
+          'https://i.pinimg.com/736x/9d/64/13/9d6413e32ba550ce37546862e6a9e5b5.jpg'
+        ]
+      },
+      {
+        id: 3,
+        location: 'Udaipur',
+        image: 'https://i.pinimg.com/736x/07/bf/8a/07bf8a5bc33cc3987a10009feaf16b6d.jpg',
+        story: `Our Goa trip was something we had been planning throughout college from first year to second but it finally happened in our third year. It was right before finals, a stressful time, but we knew we had to go because deep down we all felt this might be our last trip together before life pulled us in different directions. So the moment we got the chance to opt out, we took it booked our first flight and headed straight to one of the most peaceful places in India. Staying at Taj Cidade de Goa made it even more special beautiful views, a private beach, and just pure calm. It was my first time being away from home like that, just with friends, and it felt unreal. Funny enough, I don't remember every little detail, even though it hasn't been that long, but I do remember how it felt and that feeling will stay with me forever.`,
+        secondary: [
+          'https://i.pinimg.com/736x/f3/21/2a/f3212a50e574ee1914dd694b00340061.jpg',
+          'https://i.pinimg.com/736x/34/d9/40/34d940f26000c7ec4d5f0e9324133c49.jpg',
+          'https://i.pinimg.com/736x/70/ac/e1/70ace1c149f31c48cbb52d7524650a8b.jpg'
+        ]
+      }
+    ];
+
+    // ============ GALLERY ARC LAYOUT ============
+    const galleryArc = document.getElementById('galleryArc');
+    const arcItems = travelData.length;
+
+    function positionArcItems() {
+      const arcWidth = galleryArc.offsetWidth;
+      const arcHeight = galleryArc.offsetHeight;
+      const centerX = arcWidth / 2;
+
+      travelData.forEach((item, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        galleryItem.setAttribute('data-location', item.location);
+        galleryItem.setAttribute('data-id', item.id);
+        galleryItem.innerHTML = `<img src="${item.image}" alt="${item.location}" loading="lazy">`;
+
+        // Preload image to get dimensions
+        const img = new Image();
+        img.src = item.image;
+        img.onload = () => {
+          const aspectRatio = img.naturalWidth / img.naturalHeight;
+          const baseSize = 160;
+          let width, height;
+          if (aspectRatio > 1) {
+            width = baseSize * aspectRatio;
+            height = baseSize;
+          } else {
+            width = baseSize;
+            height = baseSize / aspectRatio;
+          }
+          galleryItem.style.width = `${width}px`;
+          galleryItem.style.height = `${height}px`;
+          galleryItem.style.position = 'absolute';
+
+          const progress = index / (arcItems - 1);
+          const angle = (progress - 0.5) * Math.PI * 0.8;
+          const radiusX = arcWidth * 0.4;
+          const radiusY = arcHeight * 0.5;
+
+          const x = centerX + Math.sin(angle) * radiusX - width / 2;
+          const y = arcHeight - Math.cos(angle) * radiusY - height / 2;
+
+          galleryItem.style.left = `${x}px`;
+          galleryItem.style.top = `${y}px`;
+        };
+
+        galleryItem.addEventListener('click', () => openExpandedView(item));
+
+        galleryArc.appendChild(galleryItem);
+
+        // Staggered animation
+        setTimeout(() => {
+          galleryItem.classList.add('visible');
+        }, 300 + index * 100);
+      });
+    }
+
+    // ============ EXPANDED VIEW ============
+    const expandedView = document.getElementById('expandedView');
+    const expandedBg = document.getElementById('expandedBg');
+    const storyTitle = document.getElementById('storyTitle');
+    const storyDate = document.getElementById('storyDate');
+    const storyText = document.getElementById('storyText');
+    const secondaryImages = document.getElementById('secondaryImages');
+    const closeBtn = document.querySelector('.close-btn');
+
+    function openExpandedView(item) {
+      expandedBg.style.backgroundImage = `url(${item.image})`;
+      storyTitle.textContent = item.location;
+      storyDate.textContent = item.date;
+      storyText.textContent = item.story;
+
+      secondaryImages.innerHTML = '';
+      item.secondary.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Secondary travel photo';
+        img.loading = 'lazy';
+        secondaryImages.appendChild(img);
+      });
+
+      expandedView.classList.add('active');
+      document.body.classList.add('locked');
+    }
+
+    function closeExpandedView() {
+      expandedView.classList.remove('active');
+      document.body.classList.remove('locked');
+    }
+
+    closeBtn.addEventListener('click', closeExpandedView);
+    expandedView.addEventListener('click', (e) => {
+      if (e.target === expandedView || e.target.classList.contains('expanded-bg')) {
+        closeExpandedView();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeExpandedView();
+    });
+
+    // ============ SCROLL ANIMATIONS ============
+    const galleryTitle = document.querySelector('.gallery-title');
+    const gallerySection = document.querySelector('.gallery-section');
+
+    const titleObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          galleryTitle.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.5 });
+
+    titleObserver.observe(gallerySection);
+
+    // ============ SCROLL INDICATOR ============
+    document.querySelector('.scroll-indicator').addEventListener('click', () => {
+      gallerySection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ============ INITIALIZE ============
+    window.addEventListener('load', () => {
+      setTimeout(positionArcItems, 500);
+    });
+
+    window.addEventListener('resize', () => {
+      galleryArc.innerHTML = '';
+      positionArcItems();
+    });
+
+    // ============ DIARY OVERLAY ============
+    const diaryLink = document.getElementById('diaryLink');
+    let diaryOverlay = document.querySelector('.diary-overlay');
+
+    // Create diary overlay if it doesn't exist
+    if (!diaryOverlay) {
+      diaryOverlay = document.createElement('div');
+      diaryOverlay.className = 'diary-overlay';
+      diaryOverlay.innerHTML = `
+        <canvas class="sparkle-canvas"></canvas>
+        <div class="diary-content">
+          <button class="diary-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+          <div class="diary-inner">
+            <h1 class="diary-heading">Finding Myself Between Destinations</h1>
+            <div class="diary-section">
+              <p class="diary-text">My name is Harsh, and I've recently completed my graduation a phase that shaped not just what I studied, but who I've become. I'm someone who isn't naturally very social, but I've learned to step out of my comfort zone when it truly matters. Over time, I've realized that I'm drawn more to experiences than routines, and that's where my love for traveling comes from. Traveling, for me, isn't just about places it's about moments, people, and the versions of myself I discover along the way. Each trip has taught me something different, whether it's learning to be independent, appreciating simple things, or just living in the moment without overthinking. I travel because it makes me feel alive, present, and a little closer to understanding myself.</p>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(diaryOverlay);
+    }
+
+    // Sparkle particles
+    const canvas = diaryOverlay.querySelector('.sparkle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.8 + 0.2;
+        this.twinkle = Math.random() * Math.PI * 2;
+        this.twinkleSpeed = Math.random() * 0.05 + 0.02;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.twinkle += this.twinkleSpeed;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity * (0.5 + Math.sin(this.twinkle) * 0.5);
+        ctx.fillStyle = '#A3B18A';
+        ctx.beginPath();
+        // Star shape
+        const spikes = 4;
+        const outerRadius = this.size;
+        const innerRadius = this.size / 2;
+        for (let i = 0; i < spikes * 2; i++) {
+          const radius = i % 2 === 0 ? outerRadius : innerRadius;
+          const angle = (i * Math.PI) / spikes - Math.PI / 2;
+          const x = this.x + Math.cos(angle) * radius;
+          const y = this.y + Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 60; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      animationId = requestAnimationFrame(animateParticles);
+    }
+
+    function openDiary() {
+      diaryOverlay.classList.add('active');
+      document.body.classList.add('locked');
+      resizeCanvas();
+      initParticles();
+      animateParticles();
+    }
+
+    function closeDiary() {
+      diaryOverlay.classList.remove('active');
+      document.body.classList.remove('locked');
+      cancelAnimationFrame(animationId);
+    }
+
+    diaryLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openDiary();
+    });
+
+    diaryOverlay.querySelector('.diary-close').addEventListener('click', closeDiary);
+    diaryOverlay.addEventListener('click', (e) => {
+      if (e.target === diaryOverlay || e.target.classList.contains('diary-bg')) {
+        closeDiary();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && diaryOverlay.classList.contains('active')) {
+        closeDiary();
+      }
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Submit form handler
+    const submitForm = document.getElementById('submitForm');
+    if (submitForm) {
+      submitForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('submitName').value;
+        const image = document.getElementById('submitImage').value;
+        const story = document.getElementById('submitStory').value;
+        const message = `Name: ${name}%0AImage: ${image}%0AStory: ${story}`;
+        window.open(`https://instagram.com/hiharshh`,'_blank');
+        submitForm.reset();
+        alert('Thanks! Your story has been sent.');
+      });
+    }
+  </script>
+</body>
+</html>
